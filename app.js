@@ -1,7 +1,6 @@
-// 全局变量
+// 批量文件重命名工具 - 完全免费版
 let uploadedFiles = [];
 
-// 初始化
 document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
 });
@@ -28,15 +27,14 @@ function setupEventListeners() {
     
     // 操作按钮
     document.getElementById('clearBtn').addEventListener('click', clearFiles);
-    document.getElementById('renameBtn').addEventListener('click', showPaymentModal);
-    
-    // 下载按钮
-    document.getElementById('downloadBtn').addEventListener('click', downloadFiles);
+    document.getElementById('renameBtn').addEventListener('click', processRename);
 }
 
 function handleFileSelect(e) {
     const files = Array.from(e.target.files);
     addFiles(files);
+    // 清空 input 以便重复选择相同文件
+    e.target.value = '';
 }
 
 function handleDragOver(e) {
@@ -52,17 +50,13 @@ function handleDragLeave(e) {
 function handleDrop(e) {
     e.preventDefault();
     document.getElementById('uploadArea').classList.remove('dragover');
-    
     const files = Array.from(e.dataTransfer.files);
     addFiles(files);
 }
 
 function addFiles(files) {
-    const fileList = document.getElementById('fileList');
-    const previewList = document.getElementById('previewList');
-    
     files.forEach(file => {
-        if (!uploadedFiles.find(f => f.name === file.name)) {
+        if (!uploadedFiles.find(f => f.name === file.name && f.size === file.size)) {
             uploadedFiles.push({
                 file: file,
                 name: file.name,
@@ -71,25 +65,28 @@ function addFiles(files) {
             });
         }
     });
-    
     renderFileList();
     updatePreview();
 }
 
 function renderFileList() {
     const fileList = document.getElementById('fileList');
-    
     if (uploadedFiles.length === 0) {
         fileList.innerHTML = '';
         return;
     }
-    
     fileList.innerHTML = uploadedFiles.map((item, index) => `
         <div class="file-item">
-            <span>${item.name}</span>
+            <span>${item.name} (${formatSize(item.size)})</span>
             <button onclick="removeFile(${index})">×</button>
         </div>
     `).join('');
+}
+
+function formatSize(size) {
+    if (size < 1024) return size + ' B';
+    if (size < 1024 * 1024) return (size / 1024).toFixed(1) + ' KB';
+    return (size / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
 function removeFile(index) {
@@ -100,8 +97,13 @@ function removeFile(index) {
 
 function clearFiles() {
     uploadedFiles = [];
+    document.getElementById('previewList').innerHTML = `
+        <div class="empty-state">
+            <span class="empty-icon">👆</span>
+            <p>上传文件后预览重命名效果</p>
+        </div>
+    `;
     renderFileList();
-    updatePreview();
 }
 
 function handleNumberToggle() {
@@ -119,7 +121,6 @@ function handleDateToggle() {
 
 function updatePreview() {
     const previewList = document.getElementById('previewList');
-    
     if (uploadedFiles.length === 0) {
         previewList.innerHTML = `
             <div class="empty-state">
@@ -165,7 +166,7 @@ function generateNewName(originalName, index, rules) {
     
     // 替换文字
     if (rules.replaceOld && rules.replaceNew) {
-        name = name.replace(new RegExp(rules.replaceOld, 'g'), rules.replaceNew);
+        name = name.replace(new RegExp(escapeRegex(rules.replaceOld), 'g'), rules.replaceNew);
     }
     
     // 添加前缀
@@ -193,46 +194,32 @@ function generateNewName(originalName, index, rules) {
     return name + ext;
 }
 
+function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function formatDate(date, format) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    
-    return format
-        .replace('YYYY', year)
-        .replace('MM', month)
-        .replace('DD', day);
+    return format.replace('YYYY', year).replace('MM', month).replace('DD', day);
 }
 
-function showPaymentModal() {
+function processRename() {
     if (uploadedFiles.length === 0) {
         alert('请先上传文件');
         return;
     }
     
-    document.getElementById('fileCount').textContent = uploadedFiles.length;
-    document.getElementById('paymentModal').style.display = 'flex';
-}
-
-function closePaymentModal() {
-    document.getElementById('paymentModal').style.display = 'none';
-}
-
-function confirmPayment() {
-    const modal = document.getElementById('paymentModal');
-    modal.style.display = 'none';
-    
-    alert('感谢您的支付！正在处理您的文件...');
-    
-    setTimeout(() => {
-        renameFiles();
-    }, 1000);
-}
-
-function renameFiles() {
     const rules = getRules();
     
-    // 生成新文件名
+    // 检查是否设置了任何规则
+    if (!rules.prefix && !rules.suffix && !rules.addNumber && !rules.addDate && !rules.replaceOld) {
+        alert('请至少设置一个重命名规则（前缀、后缀、序号、日期或替换）');
+        return;
+    }
+    
+    // 生成新文件名列表
     const renamedFiles = uploadedFiles.map((item, index) => {
         const newName = generateNewName(item.name, index, rules);
         return {
@@ -242,56 +229,77 @@ function renameFiles() {
         };
     });
     
-    // 保存到全局供下载使用
-    window.renamedFiles = renamedFiles;
-    
-    // 显示成功弹窗
-    document.getElementById('successCount').textContent = renamedFiles.length;
-    document.getElementById('successModal').style.display = 'flex';
-}
-
-function downloadFiles() {
-    const renamedFiles = window.renamedFiles || [];
-    
-    if (renamedFiles.length === 0) {
-        alert('没有可下载的文件');
+    // 检查是否有重名冲突
+    const newNames = renamedFiles.map(rf => rf.newName);
+    const hasDuplicates = newNames.length !== new Set(newNames).size;
+    if (hasDuplicates) {
+        alert('⚠️ 重命名后有文件名冲突（存在相同文件名）\n请调整规则避免重复');
         return;
     }
     
-    // 创建ZIP文件（简化版本，实际需要JSZip库）
-    alert('准备下载...');
+    downloadAll(renamedFiles);
+}
+
+function downloadAll(renamedFiles) {
+    const renameBtn = document.getElementById('renameBtn');
+    renameBtn.disabled = true;
+    renameBtn.textContent = '⏳ 处理中...';
     
-    // 对于单个文件，直接下载
-    if (renamedFiles.length === 1) {
-        downloadSingleFile(renamedFiles[0]);
-    } else {
-        // 对于多个文件，模拟打包下载
-        alert(`已准备好 ${renamedFiles.length} 个文件的下载包`);
-        // 实际项目中需要使用JSZip库来创建ZIP
-    }
-    
-    // 关闭弹窗
-    document.getElementById('successModal').style.display = 'none';
+    // 使用 setTimeout 让 UI 先更新
+    setTimeout(() => {
+        try {
+            if (renamedFiles.length === 1) {
+                // 单个文件直接下载
+                downloadSingleFile(renamedFiles[0]);
+            } else {
+                // 多个文件打包成 ZIP
+                downloadAsZip(renamedFiles);
+            }
+        } catch (e) {
+            alert('下载出错：' + e.message);
+        } finally {
+            renameBtn.disabled = false;
+            renameBtn.textContent = '立即重命名';
+        }
+    }, 100);
 }
 
 function downloadSingleFile(item) {
-    const url = URL.createObjectURL(item.file);
+    // 使用新文件名下载原始文件内容
+    const blob = item.file.slice(0, item.file.size, item.file.type);
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = item.newName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
 }
 
-// 点击模态框外部关闭
-document.getElementById('paymentModal').addEventListener('click', function(e) {
-    if (e.target === this) closePaymentModal();
-});
+function downloadAsZip(renamedFiles) {
+    const zip = new JSZip();
+    
+    renamedFiles.forEach(item => {
+        zip.file(item.newName, item.file);
+    });
+    
+    zip.generateAsync({ type: 'blob' }).then(function(content) {
+        const zipName = '重命名文件_' + formatDate(new Date(), 'YYYYMMDD_HHmmss') + '.zip';
+        saveAs(content, zipName);
+    });
+}
 
-document.getElementById('successModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        this.style.display = 'none';
-    }
-});
+// 确保 saveAs 在全局可用
+if (typeof window.saveAs === 'undefined') {
+    window.saveAs = function(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+    };
+}
