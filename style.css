@@ -44,13 +44,16 @@ body {
     font-weight: 600;
 }
 
-.price-badge {
-    background: #ff6b6b;
+.free-badge {
+    background: #07c160;
     color: white;
     padding: 8px 16px;
     border-radius: 20px;
     font-weight: 600;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .main-content {
@@ -326,258 +329,12 @@ section h2 {
     margin-bottom: 0;
 }
 
-/* 弹窗 */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    padding: 20px;
-}
-
-.modal-content {
-    background: white;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 400px;
-    overflow: hidden;
-    animation: modalIn 0.3s ease;
-}
-
-@keyframes modalIn {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 25px;
-    border-bottom: 1px solid #eee;
-}
-
-.modal-header h3 {
-    color: #333;
-    font-size: 18px;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: #999;
-    cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-body {
-    padding: 25px;
-}
-
-.payment-info {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.payment-info p {
-    color: #666;
-    margin-bottom: 10px;
-}
-
-.payment-info .price {
-    font-size: 24px;
-    font-weight: 600;
-    color: #333;
-}
-
-.amount {
-    color: #ff6b6b;
-    font-size: 32px;
-}
-
-.payment-methods {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.payment-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 15px;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.payment-btn.wechat {
-    background: linear-gradient(135deg, #07c160 0%, #10b981 100%);
-    color: white;
-}
-
-.payment-btn.alipay {
-    background: linear-gradient(135deg, #1677ff 0%, #3b82f6 100%);
-    color: white;
-}
-
-.payment-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-}
-
-.payment-icon {
-    font-size: 24px;
-}
-
-/* 收款码区域 */
-.qrcode-section {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.qrcode-title {
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-.qrcode-container {
-    background: white;
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    position: relative;
-}
-
-.qrcode-img {
-    width: 180px;
-    height: 180px;
-    border-radius: 10px;
-    display: block;
-    margin: 0 auto;
-}
-
-.qrcode-placeholder {
-    width: 180px;
-    height: 180px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #07c160 0%, #10b981 100%);
-    border-radius: 10px;
-    color: white;
-}
-
-.qrcode-icon {
-    font-size: 48px;
-    margin-bottom: 10px;
-}
-
-.qrcode-placeholder p {
-    margin: 5px 0;
-    font-size: 14px;
-}
-
-.qrcode-name {
-    font-size: 12px !important;
-    opacity: 0.9;
-}
-
-.qrcode-tip {
-    color: #999;
-    font-size: 13px;
-    margin-bottom: 20px;
-}
-
-.payment-actions {
-    display: flex;
-    justify-content: center;
-}
-
-.confirm-payment-btn {
-    background: linear-gradient(135deg, #07c160 0%, #10b981 100%);
-    color: white;
-    border: none;
-    padding: 15px 40px;
-    border-radius: 30px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.confirm-payment-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 5px 20px rgba(7, 193, 96, 0.3);
-}
-
-/* 成功弹窗 */
-.modal-content.success {
-    text-align: center;
-    padding: 30px 25px;
-}
-
-.success-icon {
-    font-size: 64px;
-    margin-bottom: 15px;
-}
-
-.success h3 {
-    color: #333;
-    font-size: 22px;
-    margin-bottom: 10px;
-}
-
-.success p {
-    color: #666;
-    margin-bottom: 20px;
-}
-
-.download-btn {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    color: white;
-    border: none;
-    padding: 15px 40px;
-    border-radius: 30px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.download-btn:hover {
-    transform: scale(1.05);
-}
-
-.small-text {
-    font-size: 12px !important;
-    color: #999 !important;
+/* 禁用按钮状态 */
+.action-btn.primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 /* 纯净特性区域 */
