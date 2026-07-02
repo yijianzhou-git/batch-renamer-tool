@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>灵玦 - 下载</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font:16px/1.6 -apple-system,system-ui,'PingFang SC','Microsoft YaHei',sans-serif;
+       background:#0d1117; color:#c9d1d9; min-height:100vh; }
+.card { max-width:600px; width:100%; background:#161b22; border:1px solid #30363d;
+        border-radius:20px; padding:40px 32px; text-align:center; margin:24px auto; }
+.logo { font-size:64px; margin-bottom:8px; }
+h1 { font-size:28px; font-weight:800; background:linear-gradient(135deg,#a5b4fc,#6366f1,#8b5cf6);
+     -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:4px; }
+.sub { color:#8b949e; font-size:14px; margin-bottom:24px; }
+.desc { font-size:13px; color:#8b949e; margin-bottom:24px; line-height:1.8; }
+.version { display:inline-block; padding:3px 12px; border-radius:12px; background:rgba(99,102,241,0.12);
+           color:#a5b4fc; font-size:12px; font-weight:600; margin-bottom:24px; }
+
+.windows-badge { display:inline-flex; align-items:center; gap:8px; padding:12px 20px; 
+                 background:rgba(0,120,212,0.15); border:1px solid rgba(0,120,212,0.3);
+                 border-radius:12px; margin-bottom:20px; }
+.windows-badge .win-icon { font-size:24px; }
+.windows-badge span { color:#74b9ff; font-weight:600; font-size:15px; }
+
+.warning-box { background:rgba(240,83,83,0.1); border-left:4px solid #f05353; 
+               padding:16px; border-radius:0 12px 12px 0; margin-bottom:20px; text-align:left; }
+.warning-box .warning-icon { font-size:20px; margin-right:8px; }
+.warning-box p { color:#ff6b6b; font-size:14px; line-height:1.6; }
+
+.methods { display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
+.method { display:flex; align-items:center; gap:14px; padding:16px 18px; border:1px solid #30363d;
+          border-radius:12px; text-decoration:none; color:inherit; transition:all 0.2s ease;
+          text-align:left; cursor:pointer; }
+.method:hover { border-color:#6366f1; background:rgba(99,102,241,0.04); transform:translateY(-1px); }
+.method-icon { font-size:28px; width:48px; height:48px; display:flex; align-items:center;
+               justify-content:center; background:rgba(99,102,241,0.06); border-radius:12px; flex-shrink:0; }
+.method-body { flex:1; }
+.method-body strong { display:block; font-size:15px; color:#f0f6fc; margin-bottom:4px; }
+.method-body span { font-size:12px; color:#8b949e; line-height:1.5; }
+.method-arrow { font-size:18px; color:#484f58; }
+
+.email-form { background:#0d1117; border:1px solid #30363d; border-radius:12px; padding:20px; 
+              margin-bottom:20px; }
+.email-form label { display:block; font-size:13px; color:#8b949e; margin-bottom:8px; text-align:left; }
+.email-form input { width:100%; padding:12px 16px; background:#161b22; border:1px solid #30363d; 
+                    border-radius:8px; color:#f0f6fc; font-size:15px; outline:none; 
+                    transition:border-color 0.2s; }
+.email-form input:focus { border-color:#6366f1; }
+.email-form button { width:100%; margin-top:12px; padding:14px; background:linear-gradient(135deg,#6366f1,#8b5cf6);
+                     color:white; font-weight:600; border:none; border-radius:8px; cursor:pointer;
+                     transition:all 0.2s; }
+.email-form button:hover { transform:translateY(-1px); }
+
+.download-btn { display:inline-block; padding:16px 40px; background:linear-gradient(135deg,#6366f1,#8b5cf6);
+                color:white; font-weight:600; border-radius:12px; text-decoration:none;
+                transition:all 0.2s ease; margin-top:16px; font-size:16px; }
+.download-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(99,102,241,0.3); }
+
+.footer { font-size:12px; color:#484f58; margin-top:16px; }
+.footer a { color:#6366f1; text-decoration:none; }
+.footer a:hover { text-decoration:underline; }
+
+@media (min-width:768px) {
+    body { display:flex; align-items:center; justify-content:center; padding:24px; }
+    .card { margin:0; }
+}
+
+@media (max-width:480px) { 
+    .card { padding:24px 16px; } 
+    .method { padding:14px; }
+    .download-btn { padding:14px 32px; font-size:15px; }
+}
+</style>
+</head>
+<body>
+<div class="card">
+    <div class="logo">🐺</div>
+    <h1>灵玦</h1>
+    <p class="sub">智控万物 · AI无处不在</p>
+    <div class="version">v2.0.0 · 标准版</div>
+
+    <div class="windows-badge">
+        <span class="win-icon">🖥️</span>
+        <span>Windows 专属应用</span>
+    </div>
+
+    <div id="mobile-content" style="display:none;">
+        <div class="warning-box">
+            <p><span class="warning-icon">⚠️</span>灵玦是<strong>电脑软件</strong>，仅支持 Windows 10/11 系统</p>
+            <p style="margin-top:8px;">手机无法直接安装使用，请在电脑上打开下载链接</p>
+        </div>
+
+        <div class="email-form">
+            <label>✉️ 发送下载链接到邮箱</label>
+            <input type="email" id="emailInput" placeholder="请输入您的邮箱地址" required>
+            <button onclick="sendEmail()">发送链接到邮箱</button>
+        </div>
+
+        <div class="methods">
+            <div class="method" onclick="copyFullLink()">
+                <div class="method-icon">🔗</div>
+                <div class="method-body">
+                    <strong>复制下载链接</strong>
+                    <span>复制后在电脑浏览器中粘贴打开</span>
+                </div>
+                <div class="method-arrow">📋</div>
+            </div>
+
+            <div class="method" onclick="showWechat()">
+                <div class="method-icon">📱</div>
+                <div class="method-body">
+                    <strong>添加作者微信</strong>
+                    <span>获取安装包和使用帮助</span>
+                </div>
+                <div class="method-arrow">→</div>
+            </div>
+
+            <div class="method" onclick="openGithub()">
+                <div class="method-icon">🐙</div>
+                <div class="method-body">
+                    <strong>GitHub 发布页</strong>
+                    <span>查看版本更新日志和源码</span>
+                </div>
+                <div class="method-arrow">↗</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pc-content" style="display:none;">
+        <p class="desc">
+            人类进入AI时代。科技是人类的共同财富。<br>
+            灵玦汇聚多个智能体的优点，开箱即用，数据本地存储。<br>
+            让AI走进千家万户，让普通人享受科技发展的成果。
+        </p>
+
+        <a href="https://github.com/yijianzhou/lingjue/releases/download/v2.0.0/灵玦_安装程序_v2.0.0.exe" 
+           class="download-btn" target="_blank">📥 立即下载安装包</a>
+        <p style="font-size:12px;color:#6e7681;margin-top:8px;">约 500MB · GitHub Releases · 安全可靠</p>
+
+        <div class="methods">
+            <div class="method" onclick="copyFullLink()">
+                <div class="method-icon">🔗</div>
+                <div class="method-body">
+                    <strong>复制下载链接</strong>
+                    <span>复制链接分享给好友，或粘贴到下载工具</span>
+                </div>
+                <div class="method-arrow">📋</div>
+            </div>
+
+            <div class="method" onclick="showWechat()">
+                <div class="method-icon">📱</div>
+                <div class="method-body">
+                    <strong>添加作者微信</strong>
+                    <span>获取安装包、使用帮助和技术支持</span>
+                </div>
+                <div class="method-arrow">→</div>
+            </div>
+
+            <div class="method" onclick="openGithub()">
+                <div class="method-icon">🐙</div>
+                <div class="method-body">
+                    <strong>GitHub 发布页</strong>
+                    <span>查看版本历史、更新日志和源码</span>
+                </div>
+                <div class="method-arrow">↗</div>
+            </div>
+
+            <div class="method" onclick="showUSBInfo()">
+                <div class="method-icon">💾</div>
+                <div class="method-body">
+                    <strong>U盘 / 移动硬盘拷贝</strong>
+                    <span>联系作者获取便携版，插上即用</span>
+                </div>
+                <div class="method-arrow">→</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="wechat-modal" style="display:none;">
+        <div style="background:#0d1117;border:1px solid #30363d;border-radius:12px;padding:20px;margin-bottom:20px;">
+            <div style="font-size:12px;color:#8b949e;margin-bottom:8px;">📱 扫码添加作者微信</div>
+            <img src="qr_codes/wechat_qr.jpg" alt="微信二维码" 
+                 style="width:200px;height:200px;margin:0 auto 12px;display:block;border-radius:8px;">
+            <p style="font-size:12px;color:#8b949e;">添加易建周微信，直接获取安装包</p>
+        </div>
+    </div>
+
+    <div id="usb-modal" style="display:none;">
+        <div style="background:#0d1117;border:1px solid #30363d;border-radius:12px;padding:20px;margin-bottom:20px;">
+            <div style="font-size:12px;color:#8b949e;margin-bottom:8px;">💾 便携版 · U盘即用</div>
+            <div style="width:200px;height:200px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:rgba(99,102,241,0.06);border-radius:12px;font-size:48px;">💾</div>
+            <p style="font-size:12px;color:#8b949e;">便携版约500MB，无需安装，插上即用</p>
+            <a href="mailto:yijianzhou@sina.cn?subject=获取灵玦便携版" class="download-btn" style="margin-top:12px;">📧 联系作者</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        研发助手: <strong>天狼</strong> (Hermes Agent) · <strong>Trae</strong><br>
+        核心开发: <strong>易建周</strong> · 
+        <a href="mailto:yijianzhou@sina.cn">yijianzhou@sina.cn</a>
+    </div>
+</div>
+
+<script>
+const DOWNLOAD_URL = 'https://github.com/yijianzhou-git/lingjue/releases/download/v2.0.0/灵玦_安装程序_v2.0.0.exe';
+
+function isMobile() {
+    const ua = navigator.userAgent.toLowerCase();
+    return /android|iphone|ipad|ipod|mobile/.test(ua) && !/windows phone/.test(ua);
+}
+
+function init() {
+    const mobileContent = document.getElementById('mobile-content');
+    const pcContent = document.getElementById('pc-content');
+    
+    if (isMobile()) {
+        mobileContent.style.display = 'block';
+    } else {
+        pcContent.style.display = 'block';
+    }
+}
+
+function copyFullLink() {
+    copyToClipboard(DOWNLOAD_URL);
+}
+
+function copyToClipboard(text) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('✅ 已复制下载链接');
+        });
+    } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert('✅ 已复制');
+    }
+}
+
+function sendEmail() {
+    const email = document.getElementById('emailInput').value;
+    if (!email) {
+        alert('请输入邮箱地址');
+        return;
+    }
+    const subject = encodeURIComponent('灵玦 AI助手 - 下载链接');
+    const body = encodeURIComponent('您好！\n\n这是灵玦 AI助手的下载链接：\n' + DOWNLOAD_URL + '\n\n灵玦是一款功能强大的AI智能助手，支持AI聊天、图片处理、视频处理、文件管理等多种功能。\n\n注意：灵玦仅支持 Windows 10/11 系统，请在电脑上下载安装。\n\n如有问题，请联系：yijianzhou@sina.cn');
+    window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body;
+}
+
+function showWechat() {
+    document.getElementById('usb-modal').style.display = 'none';
+    const modal = document.getElementById('wechat-modal');
+    modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+}
+
+function showUSBInfo() {
+    document.getElementById('wechat-modal').style.display = 'none';
+    const modal = document.getElementById('usb-modal');
+    modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+}
+
+function openGithub() {
+    window.open('https://github.com/yijianzhou/lingjue/releases', '_blank');
+}
+
+init();
+</script>
+</body>
+</html>
